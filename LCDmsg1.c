@@ -1,8 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program STM32F446RE-05-LCDmsg_8bit
+  * @file           : LCDmsg1.c
+  * Modification to Program 3-1 in "STM32 Arm Programming for Embedded Systems"
+  * by Muhammad Ali Mazidi, Shujen Chen and Eshragh Ghaemi.
+  * This small change will let you use an Arduino 1602A LCD Module without
+  * it Arduino header file.
+  * Used documentation by Shenzhen Eone Electronics Co., Ltd V1.2
+  * Test the delays for your hardware and adjust accordingly.
   ******************************************************************************
   * The LCD controller is connected to the Nucleo-F446RE as follows
   *
@@ -29,48 +34,49 @@ int main(void) {
 	LCD_init();
 
 	while(1) {
-        /* write "Start" on LCD */
+        /* write "STM32" on LCD */
 		LCD_data('S');
 		LCD_data('T');
 		LCD_data('M');
 		LCD_data('3');
 		LCD_data('2');
-		delayMs(5000); // test from 1000 to 5000
+		delayMs(5000); // changed from 1000 to 5000
 
 		/* clear LCD display */
 		LCD_command(1);
-		delayMs(10); // from 500 to 10
+		delayMs(10); // changed from 500 to 10
 	}
 }
 
 /* initialise port pins then initiliase LCD controller */
 void LCD_init(void) {
+    	
 	PORTS_init();
 
-	delayMs(30);			/* initialisation sequence */
-	LCD_command(0X30);
-	delayMs(10);
-	LCD_command(0X30);
-	delayMs(1);
-	LCD_command(0X30);
+    	delayMs(30);			/* initialisation sequence */
+    	LCD_command(0X30);
+    	delayMs(10);
+    	LCD_command(0X30);
+    	delayMs(1);
+    	LCD_command(0X30);
 
-	LCD_command(0X38);		/* set 8-bit data, 2-line, 5x7 font */
-    LCD_command(0X06);		/* move cursor right after each char */
-    LCD_command(0X01);		/* clear screen, move cursor to home */
-    LCD_command(0X0F);		/* turn on display, cursor blinking */
+    	LCD_command(0X38);		/* set 8-bit data, 2-line, 5x7 font */
+    	LCD_command(0X06);		/* move cursor right after each char */
+    	LCD_command(0X01);		/* clear screen, move cursor to home */
+    	LCD_command(0X0F);		/* turn on display, cursor blinking */
 }
 
 void PORTS_init(void) {
 	RCC->AHB1ENR |= 0X06;		/* enable GPIOB/C clock */
 
-    /* PB5 for LCD R/S */
+    	/* PB5 for LCD R/S */
 	/* PB6 for LCD R/W */
 	/* PB7 for LCD EN */
 	GPIOB->MODER &= ~0X0000FC00;		/* clear pin mode */
 	GPIOB->MODER |= 0X00005400;			/* set pin output mode */
 	GPIOB->BSRR = 0X00C00000;			/* turn off EN and R/W */
 
-    /* PC0-PC7 for LCD D0-D7, respectively. */
+    	/* PC0-PC7 for LCD D0-D7, respectively. */
 	GPIOC->MODER &= ~0X0000FFFF;		/* clear pin mode */
 	GPIOC->MODER |= 0X00005555;			/* set pin output mode */
 
